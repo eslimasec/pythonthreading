@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-# Simple multi-threaded example using Queue + Threat modules
+# Simple multi-threaded example using Queue + Thread modules
 
 import sys
 import time
