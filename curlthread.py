@@ -1,14 +1,15 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 
-# Simple multi-threaded example using Queue + Thread modules
+# Multi-threaded web page & headers grabber using Queue + Thread modules
 
 import sys
 from Queue import Queue
 from threading import Thread
 import pycurl
 import StringIO
-domains_queue = Queue()
+import traceback
 
+domains_queue = Queue()
 num_threads = 20
 
 try:
@@ -16,8 +17,8 @@ try:
     if len(sys.argv) > 2:
         num_threads = int(sys.argv[2])
 except :
-    print("Error!!! Usage: %s <file with domains to fetch> [<# of concurrent threads>]" % sys.argv[0])
-    raise SystemExit
+    print("Error!!! Usage: %s <file with sites fetch> [<# of concurrent threads>]" % sys.argv[0])
+    sys.exit()
 
 def query_domain(i, q):
     while True:
@@ -46,9 +47,11 @@ def query_domain(i, q):
         try:
             curl.perform()
         except:
-            import traceback
-            traceback.print_exc(file=sys.stderr)
-            sys.stderr.flush()
+            #traceback.print_exc(file=sys.stderr)
+	    fp_error = open(domain + ".error", "wb")
+	    error = traceback.format_exc().splitlines()
+	    fp_error.write(error[-1] + '\n')	
+	    fp_error.close()
         curl.close()
         fp_html.close()
         fp_headers = open(domain + ".headers", "wb")
